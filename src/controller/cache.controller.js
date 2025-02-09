@@ -37,3 +37,31 @@ export const addNewPair = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, newCache, "Cache created successfully"));
 });
+
+export const getCacheByKey = asyncHandler(async (req, res) => {
+  const key = Number(req.params.key);
+
+  const keyExists = await Cache.findOne({ key });
+
+  if (!keyExists) {
+    throw new ApiError(404, "Key not found", ["Key not found"]);
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { keyExists }, "Key fetched successfully"));
+});
+
+export const deleteCache = asyncHandler(async (req, res) => {
+  const key = Number(req.params.key);
+
+  const keyExists = await Cache.findOne({ key });
+
+  if (!keyExists) {
+    throw new ApiError(404, "Key not found", ["Key not found"]);
+  }
+
+  await Cache.deleteOne({ key });
+
+  res.status(200).json(new ApiResponse(200, {}, "Key deleted successfully"));
+});
